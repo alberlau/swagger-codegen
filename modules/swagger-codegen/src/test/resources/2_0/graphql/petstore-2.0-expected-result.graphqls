@@ -1,0 +1,193 @@
+
+scalar Currency
+
+scalar Void
+
+scalar Map
+
+scalar File
+
+scalar Date
+
+enum PetStatusEnum { # pet status in the store
+    sold
+    pending
+    available
+}
+
+enum FindPetsByStatusStatusEnum { # Status values that need to be considered for filter
+    sold
+    pending
+    available
+}
+
+enum OrderStatusEnum { # Order Status
+    approved
+    placed
+    delivered
+}
+
+type Query {
+    # Finds Pets by status
+    # Multiple status values can be provided with comma separated strings
+    findPetsByStatus(status : [FindPetsByStatusStatusEnum]!) : [Pet]
+
+    # Find pet by ID
+    # Returns a single pet
+    getPetById(petId : Int!) : Pet
+
+    # Get user by user name
+    getUserByName(username : String!) : User
+
+    # Logs user into the system
+    loginUser(username : String!, password : String!) : String
+
+    # Find purchase order by ID
+    # For valid response try integer IDs with value &lt;&#x3D; 5 or &gt; 10. Other values will generated exceptions
+    getOrderById(orderId : Int!) : Order
+
+    # Finds Pets by tags
+    # Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
+    findPetsByTags(tags : [String]!) : [Pet]
+
+    # Returns pet inventories by status
+    # Returns a map of status codes to quantities
+    getInventory : Map
+
+    # Logs out current logged in user session
+    logoutUser : Void
+
+}
+
+type Mutation {
+    # Deletes a pet
+    deletePet(petId : Int!, apiKey : String) : Void
+
+    # Creates list of users with given input array
+    createUsersWithListInput(body : [UserInput]!) : Void
+
+    # Delete user
+    # This can only be done by the logged in user.
+    deleteUser(username : String!) : Void
+
+    # Create user
+    # This can only be done by the logged in user.
+    createUser(body : UserInput!) : Void
+
+    # uploads an image
+    uploadFile(petId : Int!, additionalMetadata : String, file : File) : ApiResponse
+
+    # Delete purchase order by ID
+    # For valid response try integer IDs with value &lt; 1000. Anything above 1000 or nonintegers will generate API errors
+    deleteOrder(orderId : String!) : Void
+
+    # Update an existing pet
+    updatePet(body : PetInput!) : Void
+
+    # Updates a pet in the store with form data
+    updatePetWithForm(petId : Int!, name : String, status : String) : Void
+
+    # Creates list of users with given input array
+    createUsersWithArrayInput(body : [UserInput]!) : Void
+
+    # Add a new pet to the store
+    addPet(body : PetInput!) : Void
+
+    # Place an order for a pet
+    placeOrder(body : OrderInput!) : Order
+
+    # Updated user
+    # This can only be done by the logged in user.
+    updateUser(username : String!, body : UserInput!) : Void
+
+}
+
+type Order { # An order for a pets from the pet store
+    id : Int
+    petId : Int
+    quantity : Int
+    shipDate : Date
+    status : OrderStatusEnum # Order Status
+    complete : Boolean
+}
+
+type Tag { # A tag for a pet
+    id : Int
+    name : String
+}
+
+type User { # A User who is purchasing from the pet store
+    id : Int
+    username : String
+    firstName : String
+    lastName : String
+    email : String
+    password : String
+    phone : String
+    userStatus : Int # User Status
+}
+
+type Category { # A category for a pet
+    id : Int
+    name : String
+}
+
+type Amount { # some description 
+    value : Float! # some description 
+    currency : Currency!
+}
+
+type Pet { # A pet for sale in the pet store
+    id : Int
+    category : Category
+    name : String!
+    photoUrls : [String]!
+    tags : [Tag]
+    status : PetStatusEnum # pet status in the store
+}
+
+type ApiResponse { # Describes the result of uploading an image resource
+    code : Int
+    type : String
+    message : String
+}
+
+input CategoryInput { # A category for a pet
+    id : Int
+    name : String
+}
+
+input TagInput { # A tag for a pet
+    id : Int
+    name : String
+}
+
+input UserInput { # A User who is purchasing from the pet store
+    id : Int
+    username : String
+    firstName : String
+    lastName : String
+    email : String
+    password : String
+    phone : String
+    userStatus : Int # User Status
+}
+
+input OrderInput { # An order for a pets from the pet store
+    id : Int
+    petId : Int
+    quantity : Int
+    shipDate : Date
+    status : OrderStatusEnum # Order Status
+    complete : Boolean
+}
+
+input PetInput { # A pet for sale in the pet store
+    id : Int
+    category : CategoryInput
+    name : String!
+    photoUrls : [String]!
+    tags : [TagInput]
+    status : PetStatusEnum # pet status in the store
+}
+

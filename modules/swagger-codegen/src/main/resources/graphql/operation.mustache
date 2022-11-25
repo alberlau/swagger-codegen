@@ -1,0 +1,3 @@
+{{#description}}# {{.}}{{/description}}{{#notes}}
+    # {{.}}{{/notes}}
+    {{name}}{{#hasParams}}({{#params}}{{name}} : {{#isOfTypeArray}}[{{/isOfTypeArray}}{{type}}{{>required}}{{^-last}}, {{/-last}}{{/params}}){{/hasParams}} : {{graphQLPreparedReturnDataTypeFragment}}

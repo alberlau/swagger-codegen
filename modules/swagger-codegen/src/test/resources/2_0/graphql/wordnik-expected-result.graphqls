@@ -1,0 +1,383 @@
+
+scalar string
+
+scalar Void
+
+scalar Date
+
+type Query {
+    # Given a word as a string, returns the WordObject that represents it
+    getWord(word : String!, useCanonical : String, includeSuggestions : String) : WordObject
+
+    # Returns an array of random WordObjects
+    getRandomWords(hasDictionaryDef : String, includePartOfSpeech : String, excludePartOfSpeech : String, minCorpusCount : Int, maxCorpusCount : Int, minDictionaryCount : Int, maxDictionaryCount : Int, minLength : Int, maxLength : Int, sortBy : String, sortOrder : String, limit : Int) : [WordObject]
+
+    # Given a word as a string, returns relationships from the Word Graph
+    getRelatedWords(word : String!, useCanonical : String, relationshipTypes : String, limitPerRelationshipType : Int) : [Related]
+
+    # Fetches bi-gram phrases for a word
+    getPhrases(word : String!, limit : Int, wlmi : Int, useCanonical : String) : [Bigram]
+
+    # Returns text pronunciations for a given word
+    getTextPronunciations(word : String!, useCanonical : String, sourceDictionary : String, typeFormat : String, limit : Int) : [TextPron]
+
+    # Returns examples for a word
+    getExamples(word : String!, includeDuplicates : String, useCanonical : String, skip : Int, limit : Int) : ExampleSearchResults
+
+    # Fetches etymology data
+    getEtymologies(word : String!, useCanonical : String) : [string]
+
+    # Returns a top example for a word
+    getTopExample(word : String!, useCanonical : String) : Example
+
+    # Returns a single random WordObject
+    getRandomWord(hasDictionaryDef : String, includePartOfSpeech : String, excludePartOfSpeech : String, minCorpusCount : Int, maxCorpusCount : Int, minDictionaryCount : Int, maxDictionaryCount : Int, minLength : Int, maxLength : Int) : WordObject
+
+    # Reverse dictionary search
+    reverseDictionary(query : String!, findSenseForWord : String, includeSourceDictionaries : String, excludeSourceDictionaries : String, includePartOfSpeech : String, excludePartOfSpeech : String, minCorpusCount : Int, maxCorpusCount : Int, minLength : Int, maxLength : Int, expandTerms : String, includeTags : String, sortBy : String, sortOrder : String, skip : String, limit : Int) : DefinitionSearchResults
+
+    # Returns syllable information for a word
+    getHyphenation(word : String!, useCanonical : String, sourceDictionary : String, limit : Int) : [Syllable]
+
+    # Return definitions for a word
+    getDefinitions(word : String!, limit : Int, partOfSpeech : String, includeRelated : String, sourceDictionaries : [String], useCanonical : String, includeTags : String) : [Definition]
+
+    # Returns usage statistics for the API account.
+    getApiTokenStatus(apiKey : String) : ApiTokenStatus
+
+    # Returns word usage over time
+    getWordFrequency(word : String!, useCanonical : String, startYear : Int, endYear : Int) : FrequencySummary
+
+    # Authenticates a User
+    authenticate(username : String!, password : String!) : AuthenticationToken
+
+    # Fetches a WordList by ID
+    getWordListByPermalink(permalink : String!, authToken : String!) : WordList
+
+    # Returns the logged-in User
+    # Requires a valid auth_token to be set.
+    getLoggedInUser(authToken : String!) : User
+
+    # Returns a specific WordOfTheDay
+    getWordOfTheDay(date : String) : WordOfTheDay
+
+    # Fetches audio metadata for a word.
+    # The metadata includes a time-expiring fileUrl which allows reading the audio file directly from the API.  Currently only audio pronunciations from the American Heritage Dictionary in mp3 format are supported.
+    getAudio(word : String!, useCanonical : String, limit : Int) : [AudioFile]
+
+    # Fetches WordList objects for the logged-in user.
+    getWordListsForLoggedInUser(authToken : String!, skip : Int, limit : Int) : [WordList]
+
+    # Fetches words in a WordList
+    getWordListWords(permalink : String!, authToken : String!, sortBy : String, sortOrder : String, skip : Int, limit : Int) : [WordListWord]
+
+    # Searches words
+    searchWords(query : String!, caseSensitive : String, includePartOfSpeech : String, excludePartOfSpeech : String, minCorpusCount : Int, maxCorpusCount : Int, minDictionaryCount : Int, maxDictionaryCount : Int, minLength : Int, maxLength : Int, skip : Int, limit : Int) : WordSearchResults
+
+}
+
+type Mutation {
+    # Authenticates a user
+    authenticatePost(username : String!, body : String!) : AuthenticationToken
+
+    # Creates a WordList.
+    createWordList(authToken : String!, body : WordListInput) : WordList
+
+    # Deletes an existing WordList
+    deleteWordList(permalink : String!, authToken : String!) : Void
+
+    # Updates an existing WordList
+    updateWordList(permalink : String!, authToken : String!, body : WordListInput) : Void
+
+    # Adds words to a WordList
+    addWordsToWordList(permalink : String!, authToken : String!, body : [StringValueInput]) : Void
+
+    # Removes words from a WordList
+    deleteWordsFromWordList(permalink : String!, authToken : String!, body : [StringValueInput]) : Void
+
+}
+
+type FrequencySummary { # 
+    unknownYearCount : Int
+    totalCount : Int
+    frequencyString : String
+    word : String
+    frequency : [Frequency]
+}
+
+type WordList { # 
+    numberWordsInList : Int
+    userId : Int
+    name : String
+    permalink : String
+    updatedAt : Date
+    username : String
+    lastActivityAt : Date
+    type : String
+    id : Int
+    createdAt : Date
+    description : String
+}
+
+type Label { # 
+    text : String
+    type : String
+}
+
+type FacetValue { # 
+    count : Int
+    value : String
+}
+
+type AudioFile { # 
+    voteCount : Int
+    word : String
+    attributionText : String
+    audioType : String
+    attributionUrl : String
+    commentCount : Int
+    fileUrl : String
+    voteAverage : Float
+    duration : Float
+    id : Int
+    createdAt : Date
+    voteWeightedAverage : Float
+    description : String
+    createdBy : String
+}
+
+type Definition { # 
+    notes : [Note]
+    sequence : String
+    textProns : [TextPron]
+    extendedText : String
+    word : String
+    attributionText : String
+    citations : [Citation]
+    partOfSpeech : String
+    text : String
+    attributionUrl : String
+    seqString : String
+    sourceDictionary : String
+    score : Float
+    exampleUses : [ExampleUsage]
+    relatedWords : [Related]
+    labels : [Label]
+}
+
+type WordObject { # 
+    id : Int
+    word : String
+    originalWord : String
+    suggestions : [String]
+    canonicalForm : String
+    vulgar : String
+}
+
+type Related { # 
+    label1 : String
+    relationshipType : String
+    label2 : String
+    label3 : String
+    words : [String]
+    gram : String
+    label4 : String
+}
+
+type ScoredWord { # 
+    wordType : String
+    lemma : String
+    position : Int
+    word : String
+    docTermCount : Int
+    stopword : Boolean
+    partOfSpeech : String
+    score : Float
+    baseWordScore : Float
+    id : Int
+    sentenceId : Int
+}
+
+type SimpleDefinition { # 
+    text : String
+    source : String
+    note : String
+    partOfSpeech : String
+}
+
+type Sentence { # 
+    hasScoredWords : Boolean
+    id : Int
+    scoredWords : [ScoredWord]
+    display : String
+    rating : Int
+    documentMetadataId : Int
+}
+
+type Syllable { # 
+    text : String
+    seq : Int
+    type : String
+}
+
+type TextPron { # 
+    raw : String
+    seq : Int
+    rawType : String
+}
+
+type User { # 
+    id : Int
+    username : String
+    email : String
+    status : Int
+    faceBookId : String
+    userName : String
+    displayName : String
+    password : String
+}
+
+type Citation { # 
+    cite : String
+    source : String
+}
+
+type Note { # 
+    noteType : String
+    appliesTo : [String]
+    value : String
+    pos : Int
+}
+
+type ApiTokenStatus { # 
+    valid : Boolean
+    token : String
+    resetsInMillis : Int
+    remainingCalls : Int
+    expiresInMillis : Int
+    totalRequests : Int
+}
+
+type ContentProvider { # 
+    id : Int
+    name : String
+}
+
+type StringValue { # 
+    word : String
+}
+
+type DefinitionSearchResults { # 
+    results : [Definition]
+    totalResults : Int
+}
+
+type Frequency { # 
+    count : Int
+    year : Int
+}
+
+type Facet { # 
+    facetValues : [FacetValue]
+    name : String
+}
+
+type AuthenticationToken { # 
+    token : String
+    userId : Int
+    userSignature : String
+}
+
+type Bigram { # 
+    count : Int
+    gram2 : String
+    gram1 : String
+    wlmi : Float
+    mi : Float
+}
+
+type WordListWord { # 
+    id : Int
+    word : String
+    username : String
+    userId : Int
+    createdAt : Date
+    numberCommentsOnWord : Int
+    numberLists : Int
+}
+
+type Example { # 
+    sentence : Sentence
+    exampleId : Int
+    word : String
+    text : String
+    url : String
+    provider : ContentProvider
+    score : ScoredWord
+    documentId : Int
+    title : String
+    id : Int
+    year : Int
+    rating : Float
+}
+
+type WordSearchResults { # 
+    searchResults : [WordSearchResult]
+    totalResults : Int
+}
+
+type ExampleSearchResults { # 
+    facets : [Facet]
+    examples : [Example]
+}
+
+type WordOfTheDay { # 
+    definitions : [SimpleDefinition]
+    htmlExtra : String
+    parentId : String
+    examples : [SimpleExample]
+    contentProvider : ContentProvider
+    word : String
+    note : String
+    id : Int
+    createdAt : Date
+    publishDate : Date
+    category : String
+    createdBy : String
+}
+
+type ExampleUsage { # 
+    text : String
+}
+
+type SimpleExample { # 
+    id : Int
+    title : String
+    text : String
+    url : String
+}
+
+type WordSearchResult { # 
+    count : Int
+    lexicality : Float
+    word : String
+}
+
+input WordListInput { # 
+    numberWordsInList : Int
+    userId : Int
+    name : String
+    permalink : String
+    updatedAt : Date
+    username : String
+    lastActivityAt : Date
+    type : String
+    id : Int
+    createdAt : Date
+    description : String
+}
+
+input StringValueInput { # 
+    word : String
+}
+

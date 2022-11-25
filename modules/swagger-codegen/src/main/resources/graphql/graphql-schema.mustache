@@ -1,0 +1,47 @@
+{{#graphql-stuff}}
+{{#graphQlScalars}}
+
+scalar {{{.}}}
+{{/graphQlScalars}}
+
+{{#graphQlEnums}}
+enum {{name}} { {{#description}}# {{.}}{{/description}}
+    {{#values}}
+    {{.}}
+    {{/values}}
+}
+
+{{/graphQlEnums}}
+{{#queriesPresent}}
+type Query {
+{{#graphQlQueries}}
+    {{>operation}}
+{{/graphQlQueries}}
+}
+
+{{/queriesPresent}}
+{{#mutationsPresent}}
+type Mutation {
+{{#graphQlMutations}}
+    {{>operation}}
+{{/graphQlMutations}}
+}
+
+{{/mutationsPresent}}
+{{#graphQlTypes}}
+type {{name}} { # {{description}}
+{{#props}}
+    {{>prop}}
+{{/props}}
+}
+
+{{/graphQlTypes}}
+{{#graphQlInputs}}
+input {{name}} { # {{description}}
+{{#props}}
+    {{>prop}}
+{{/props}}
+}
+
+{{/graphQlInputs}}
+{{/graphql-stuff}}
